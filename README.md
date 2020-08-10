@@ -4,4 +4,4 @@ This guide is oriented towards the type of empirical work that Economists do, an
 
 The guide does NOT attempt to be a step-by-step introduction to installing and using these programs; it assumes basic working knowledge of these languages, and simply translates "How would I do this in Stata..." to R and python through working examples.
 
-To get started with a Stata-users intro to pandas, open **intro_stata_to_pandas.ipynb**. The R guide is on its way!
+To get started with a Stata user's intro to pandas, open **intro_stata_to_pandas.ipynb**. The R guide is on its way!
