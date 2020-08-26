@@ -229,3 +229,53 @@ sinac <- sinac %>% mutate(schooling_cat =
 summary(sinac$schooling_cat)
 
 ```
+
+Now let's look at the distribution of these categories, which if you're curious correspond to completed secondary, completed high school, and more than high school:
+
+```{r plotschool}
+
+# first label my variable by making it a factor var
+
+sinac <- sinac %>% mutate(school = factor(schooling_cat,
+                                          levels = c(1,2,3),
+                                          labels = c("Secondary", "HS", "HS+")
+                                          )
+                          )
+
+ggplot(sinac, aes(school)) + 
+  geom_bar(color="darkblue", fill="lightblue") + 
+  labs(x = 'Schooling', y = '# observations') +
+  theme_bw()
+  
+
+```
+
+### Aggregating data (collapse)
+
+Let's get the mean by state; to do this, we want to collapse by the variable 'ent_res_cve'. If you want to group by more variables, just add them to the list for the "by" option. You can also write your own funtions for the "FUN" option, which makes this method about as flexible as you could want!
+
+```{r colmean}
+
+## stata: collapse (mean) **, by(mun_res_cve ent_res_cve)
+sinac_means <- sinac %>% 
+  select(mother_age, weight, length, schooling_mother) %>% 
+  aggregate(by=list(sinac$ent_res_cve),
+            FUN = mean,
+            na.rm = TRUE) %>%
+  rename(ent_res_cve = Group.1)
+
+
+```
+
+```{r showmean, echo=FALSE}
+library(knitr)
+sinac_means %>% head(10) %>% kable()
+```
+
+### Merging 
+
+
+
+
+
+

@@ -311,7 +311,7 @@ summary(sinac$ent_res_cve)
 ```
 
 ```r
-# good! looks like the max code is now 32 (the number of states in mexico)
+# good! looks like the max code is now 32 (the number of states in Mexico)
 ```
 
 
@@ -336,3 +336,60 @@ summary(sinac$schooling_cat)
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
 ##   1.000   1.000   2.000   1.986   3.000   3.000     354
 ```
+
+Now let's look at the distribution of these categories, which if you're curious correspond to completed secondary, completed high school, and more than high school:
+
+
+```r
+# first label my variable by making it a factor var
+
+sinac <- sinac %>% mutate(school = factor(schooling_cat,
+                                          levels = c(1,2,3),
+                                          labels = c("Secondary", "HS", "HS+")
+                                          )
+                          )
+
+ggplot(sinac, aes(school)) + 
+  geom_bar(color="darkblue", fill="lightblue") + 
+  labs(x = 'Schooling', y = '# observations') +
+  theme_bw()
+```
+
+![](intro_stata_to_r_files/figure-html/plotschool-1.png)<!-- -->
+
+### Aggregating data (collapse)
+
+Let's get the mean by state; to do this, we want to collapse by the variable 'ent_res_cve'. If you want to group by more variables, just add them to the list for the "by" option. You can also write your own funtions for the "FUN" option, which makes this method about as flexible as you could want!
+
+
+```r
+## stata: collapse (mean) **, by(mun_res_cve ent_res_cve)
+sinac_means <- sinac %>% 
+  select(mother_age, weight, length, schooling_mother) %>% 
+  aggregate(by=list(sinac$ent_res_cve),
+            FUN = mean,
+            na.rm = TRUE) %>%
+  rename(ent_res_cve = Group.1)
+```
+
+
+ ent_res_cve   mother_age     weight     length   schooling_mother
+------------  -----------  ---------  ---------  -----------------
+           1     25.40152   3114.582   49.57364           5.307087
+           2     24.16774   3309.502   50.61504           4.878788
+           3     24.33645   3301.020   50.90000           5.175926
+           4     25.17213   3092.000   49.11570           5.033058
+           5     24.60542   3277.745   50.81377           5.572835
+           6     25.14000   3344.837   50.52688           5.424242
+           7     25.36635   3184.692   49.72425           4.148265
+           8     24.34216   3247.320   50.84615           4.994318
+           9     25.57806   3051.453   49.66126           5.709814
+          10     25.18333   3224.649   51.04545           5.197987
+
+### Merging 
+
+
+
+
+
+
