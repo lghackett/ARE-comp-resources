@@ -1925,6 +1925,91 @@ pre {
 </div>
 <div id="merging" class="section level3">
 <h3>Merging</h3>
+<p>In Stata, if you’re like me you love the table Stata prints for you after a merge reporting how many observations were merged, vs. right- and left-only. This simple report gives us lots of hints about things that may be going wrong, differences in reporting between datasets, and many other sneaky data details.</p>
+<p>In R this is not done exactly the same, but we can still check for these issues using more flexible merge options. Here I will focus on the <code>dplyr</code> way of merging because it is intuitive, especially for Stata fans, though base R also has a merge function.</p>
+<p>In dplyr there are three separate commands for merging:</p>
+<ul>
+<li><p><code>inner_join()</code> merges the tables and keeps only those observations found in both tables, like running <code>keep if _m == 3</code> after a Stata merge.</p></li>
+<li><p><code>left_join()</code> merges the tables and keeps only observations matched or unmatched but found in the “master” data, like running <code>keep if _m == 3 | _m == 1</code> in Stata.</p></li>
+<li><p><code>right_join()</code> merges the tables and keeps only observations matched or unmatched but found in the “merging” data, like running <code>keep if _m == 3 | _m == 2</code> in Stata.</p></li>
+</ul>
+<p>Thre are more fun commands available like <code>semi_join()</code> and <code>anti_join()</code> which can be very useful for several tricks we use merging for, like using merging to identify observations we want to keep or discard, but I won’t go into those here.</p>
+<p>Another nice feature of these join functions is that instead of renaming in order to get matching columns, dplyr will let us tell it that differently named columns across datasets are really the same. Let’s see an example.</p>
+<p>Say I want to add to this dataset the population of each municipality. My dictionary is at the locality level, but I need the municipal level. So I’m going to follow these steps:</p>
+<ol style="list-style-type: decimal">
+<li>Collapse dictionary to municipal level</li>
+<li>Merge</li>
+</ol>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co"># we want total population, so our function for aggregation will be sum:</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">local_mun &lt;-<span class="st"> </span>local <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(CVE_ENT, CVE_MUN, POB_TOTAL) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="st">  </span><span class="kw">aggregate</span>(<span class="dt">by=</span><span class="kw">list</span>(local<span class="op">$</span>CVE_ENT, local<span class="op">$</span>CVE_MUN),</a>
+<a class="sourceLine" id="cb28-5" data-line-number="5">            <span class="dt">FUN =</span> sum,</a>
+<a class="sourceLine" id="cb28-6" data-line-number="6">            <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-7" data-line-number="7"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">ent_res_cve =</span> Group<span class="fl">.1</span>,</a>
+<a class="sourceLine" id="cb28-8" data-line-number="8">         <span class="dt">mun_res_cve =</span> Group<span class="fl">.2</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-9" data-line-number="9"><span class="st">  </span><span class="kw">select</span>(ent_res_cve, mun_res_cve, POB_TOTAL)</a></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">ent_res_cve</th>
+<th align="right">mun_res_cve</th>
+<th align="right">POB_TOTAL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">796667</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">466811</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">70656</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">52869</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">1070</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">28683</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">1</td>
+<td align="right">16814</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">1</td>
+<td align="right">11456</td>
+</tr>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">31307</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">1</td>
+<td align="right">84290</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 

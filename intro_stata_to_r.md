@@ -388,8 +388,52 @@ sinac_means <- sinac %>%
 
 ### Merging 
 
+In Stata, if you're like me you love the table Stata prints for you after a merge reporting how many observations were merged, vs. right- and left-only. This simple report gives us lots of hints about things that may be going wrong, differences in reporting between datasets, and many other sneaky data details. 
+
+In R this is not done exactly the same, but we can still check for these issues using more flexible merge options. Here I will focus on the ``dplyr`` way of merging because it is intuitive, especially for Stata fans, though base R also has a merge function. 
+
+In dplyr there are three separate commands for merging:
+
+* ``inner_join()`` merges the tables and keeps only those observations found in both tables, like running ``keep if _m == 3`` after a Stata merge. 
+
+* ``left_join()`` merges the tables and keeps only observations matched or unmatched but found in the "master" data, like running ``keep if _m == 3 | _m == 1`` in Stata. 
+
+* ``right_join()`` merges the tables and keeps only observations matched or unmatched but found in the "merging" data, like running ``keep if _m == 3 | _m == 2`` in Stata. 
+
+Thre are more fun commands available like ``semi_join()`` and ``anti_join()`` which can be very useful for several tricks we use merging for, like using merging to identify observations we want to keep or discard, but I won't go into those here.
+
+Another nice feature of these join functions is that instead of renaming in order to get matching columns, dplyr will let us tell it that differently named columns across datasets are really the same. Let's see an example. 
+
+Say I want to add to this dataset the population of each municipality. My dictionary is at the locality level, but I need the municipal level. So I'm going to follow these steps:
+
+1. Collapse dictionary to municipal level
+2. Merge
 
 
 
+```r
+# we want total population, so our function for aggregation will be sum:
+local_mun <- local %>% 
+  select(CVE_ENT, CVE_MUN, POB_TOTAL) %>% 
+  aggregate(by=list(local$CVE_ENT, local$CVE_MUN),
+            FUN = sum,
+            na.rm = TRUE) %>%
+  rename(ent_res_cve = Group.1,
+         mun_res_cve = Group.2) %>%
+  select(ent_res_cve, mun_res_cve, POB_TOTAL)
+```
 
+
+ ent_res_cve   mun_res_cve   POB_TOTAL
+------------  ------------  ----------
+           1             1      796667
+           2             1      466811
+           3             1       70656
+           4             1       52869
+           5             1        1070
+           6             1       28683
+           7             1       16814
+           8             1       11456
+          10             1       31307
+          11             1       84290
 

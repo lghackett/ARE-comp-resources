@@ -274,8 +274,70 @@ sinac_means %>% head(10) %>% kable()
 
 ### Merging 
 
+In Stata, if you're like me you love the table Stata prints for you after a merge reporting how many observations were merged, vs. right- and left-only. This simple report gives us lots of hints about things that may be going wrong, differences in reporting between datasets, and many other sneaky data details. 
+
+In R this is not done exactly the same, but we can still check for these issues using more flexible merge options. Here I will focus on the ``dplyr`` way of merging because it is intuitive, especially for Stata fans, though base R also has a merge function. 
+
+In dplyr there are three separate commands for merging:
+
+* ``inner_join()`` merges the tables and keeps only those observations found in both tables, like running ``keep if _m == 3`` after a Stata merge. 
+
+* ``left_join()`` merges the tables and keeps only observations matched or unmatched but found in the "master" data, like running ``keep if _m == 3 | _m == 1`` in Stata. 
+
+* ``right_join()`` merges the tables and keeps only observations matched or unmatched but found in the "merging" data, like running ``keep if _m == 3 | _m == 2`` in Stata. 
+
+Thre are more fun commands available like ``semi_join()`` and ``anti_join()`` which can be very useful for several tricks we use merging for, like using merging to identify observations we want to keep or discard, but I won't go into those here.
+
+Another nice feature of these join functions is that instead of renaming in order to get matching columns, dplyr will let us tell it that differently named columns across datasets are really the same. Let's see an example. 
+
+Say I want to add to this dataset the population of each municipality. My dictionary is at the locality level, but I need the municipal level. So I'm going to follow these steps:
+
+1. Collapse dictionary to municipal level
+2. Merge
 
 
+```{r coldic, echo=TRUE}
+# we want total population, so our function for aggregation will be sum:
+local_mun <- local %>% 
+  select(CVE_ENT, CVE_MUN, POB_TOTAL) %>% 
+  aggregate(by=list(local$CVE_ENT, local$CVE_MUN),
+            FUN = sum,
+            na.rm = TRUE) %>%
+  rename(ent_res_cve = Group.1,
+         mun_res_cve = Group.2) %>%
+  select(ent_res_cve, mun_res_cve, POB_TOTAL)
+
+```
+
+```{r showcol, echo=FALSE}
+local_mun %>% head(10) %>% kable()
+```
+
+You may look at this and think, wow, this is so much more work than just typing ``collapse (sum) POB_TOTAL, by(CVE_ENT CVE_MUN)``. And yes, it is wordier, but we are gaining a lot more control over our data by being more specific! Here I am telling R exactly what variables I want to work with, I can create my own function for aggregating, I am renaming variables in the process, and I end up with a dataset that if formatted exactly how I want it. 
+
+If I wanted to, I could even do this collapse and instead of saving it with the name "loc_mun", I could create it and use it in the merge all in one line to save myself memory and not create extra objects that are really only intermediate steps. But let's take things one step at a time for now. 
+
+Now for the merge. Some notes: 
+
+* I don't care about the population in municipalities that don't match to my birth data, so I'll choose ``left_join()``. 
+* If I don't specify "by", R will automatically find the columns that are named the same. But to ensure things are happening correctly, I'll go ahead and specify this category. 
+* Note that the first data that I mention (in this case, "sinac") is the "left" data. In Stata terminology, this would be the "master" data. 
+* There are more great options you can use to further customize your join, check out the documentation for dplyr to learn more!
+
+```{r merge, echo=TRUE}
+sinac_merge <- sinac %>% 
+  left_join(local_mun,
+            by = c('ent_res_cve','mun_res_cve'))
+
+```
+```{r showmerge, echo=FALSE}
+sinac_merge %>%
+  select(ent_res_cve, 
+         mun_res_cve, 
+         weight, 
+         POB_TOTAL) %>% 
+  head(10) %>% kable()
+```
 
 
 
