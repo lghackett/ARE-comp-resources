@@ -9,4 +9,4 @@ In general, the intro guides do NOT attempt to be a step-by-step introduction to
 To get started with a Stata user's intro to pandas, open **intro_stata_to_pandas.ipynb**. 
 To get started with a Stata user's intro to R/tidyverse, open **intro_stata_to_r.html**. The associated files, should you want a look under the hood, can be found in the folder intro_stata_to_r_files. 
 
-Note that both of these files can be rendered in GitHub, so there is no need to download unless you want to open the files and play around with commands (which I highly encourage!).
+Note that the Jupyter notebook can be rendered in GitHub, so there is no need to download. The html file is too large for online rendering, so that one is best downloaded and opened in any browser. However, if you want to download the whole file and play around with the code, I hightly encourage you to do so!
