@@ -4,6 +4,7 @@ This guide is oriented towards the type of empirical work that Economists do, an
 
 For a step by step guide to getting started with python, see **python_up&running.html** in the installation guides folder.
 
-In general, the guides do NOT attempt to be a step-by-step introduction to installing and using these programs; it assumes basic working knowledge of these languages, and simply translates "How would I do this in Stata..." to R and python through working examples.
+In general, the intro guides do NOT attempt to be a step-by-step introduction to installing and using these programs; they assume basic working knowledge of these languages, and simply translate "How would I do this in Stata..." to R and python through working examples.
 
-To get started with a Stata user's intro to pandas, open **intro_stata_to_pandas.ipynb**. The R guide is on its way!
+To get started with a Stata user's intro to pandas, open **intro_stata_to_pandas.ipynb**. 
+To get started with a Stata user's intro to R/tidyverse, open **intro_stata_to_r.html**. The associated files, should you want a look under the hood, can be found in the folder intro_stata_to_r_files. 
