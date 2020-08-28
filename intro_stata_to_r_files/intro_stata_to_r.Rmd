@@ -25,7 +25,9 @@ pre {
 }
 </style>
 
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ## Introduction
 
@@ -43,8 +45,7 @@ Also note that the flexibility of R allows for many potential ways to do things,
 
 In R we have what's called "base R" and there are packages. Base R has tons of capabilities for statistical and probability work, but packages expand this capability by providing us with more specialized commands for things like data visualization, data cleaning and Econometric models. In Stata, use of external packages is less prevalent, but you still may use external packages such as ```ivreg2``` or ```binscatter```, which you gain access to by a one-time installation via ```ssc install```. In R, we can do this either through the package manager window on the lower right side of RStudio, or through the ```install.packages()``` command. Once we have installed the package, in order to use it we call the following: 
 
-
-```r
+```{r lib, results="hide", message=FALSE}
 library(dplyr)
 library(ggplot2)
 library(haven)
@@ -54,12 +55,13 @@ library(haven)
 
 When working in Stata, frequently the first line in any dofile is ``cd``. In R, we set our current directory with:
 
-
-```r
+```{r cd, eval=FALSE}
 setwd('/users/hackettl/drive_berkeley/GSI_GSR/2020_fall/tutorials')
 ```
 
-
+```{r cd1, eval=TRUE, echo=FALSE}
+setwd('/users/hackettl/drive_berkeley/GSI_GSR/2020_fall/tutorials/pandas_for_stata_users/intro_stata_to_r_files')
+```
 
 A great advantage of R over Stata is you can import many different kinds of files with realtive ease, and hold several datasets in memory at a time. Let's import a few files I have on hand.
 
@@ -69,10 +71,9 @@ Here I use the most simple import, but like in insheet, you can choose to start/
 
 Note that to read the birth data I use ``read_dta`` which is a command provided by the **haven** package.
 
-
-```r
-sinac <- read_dta('data/sinac_sample.dta')
-local <- read.csv('data/cat_local_inegi.csv')
+```{r import1}
+sinac <- read_dta('../data/sinac_sample.dta')
+local <- read.csv('../data/cat_local_inegi.csv')
 ```
 
 ## Inspecting data
@@ -90,155 +91,76 @@ A good first step is always to take a look at the data; see how many (non-missin
 I'll put the Stata command in a comment above the python command where possible, so if you're looking for a specific command, you can search this notebook for that command (i.e., search the document for "tab" for example.
 
 
+```{r opt, echo=FALSE}
+options(width = 100)
+```
 
-
-
-```r
+```{r br}
 # br
 head(sinac, row = 10)
-```
-
-```
-## # A tibble: 6 x 18
-##   edad_madre numero_embarazos talla_nac_vivo peso_nac_vivo mun_res_cve ent_res_cve mun_nac_cve
-##        <dbl>            <dbl>          <dbl>         <dbl>       <dbl>       <dbl>       <dbl>
-## 1         36                2             49          3310          46          19          39
-## 2         28                3             48            NA          33          15           7
-## 3         20                2             48          3000         106          16         106
-## 4         20                1             52          3400          25           5          25
-## 5         27                1             50          3490          51          32          17
-## 6         30                6             51          3070          57          24          37
-## # … with 11 more variables: ent_nac_cve <dbl>, tot_consult <dbl>, schooling_mother <dbl>,
-## #   dia_nac_hijo <dbl>, mes_nac_hijo <dbl>, year_nac_hijo <dbl>, sexo_nac <dbl+lbl>,
-## #   semanas_gest <dbl>, apgar <dbl>, proced <dbl+lbl>, atendio <dbl+lbl>
 ```
 
 I don't always love the information I can see from ``head()``, so if you want a more detailed look you can click on the dataset name in the Environment window (upper right in RStudio) to see a larger format of the data, though this isn't always bery efficient. You can also use this window to see a complete list of all the variables!
 
 To get a quick look at some summary statistics of the data, you can use ``dfapply()`` which is an iterative function with the option "favstats":
 
-
-```r
+```{r sum}
 # sum sexo_nac
 summary(sinac$sexo_nac)
 ```
 
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-##  0.0000  0.0000  0.0000  0.4884  1.0000  1.0000      35
-```
-
 Note that in R, we have to associate variables we are interested in with the dataset they belong to, because we may and in fact do in this case have several datasets in memory. To do this, we use the syntax ``dataset_name$variable_name``. In the tidyverse and in other packages, we can use the pipe ``%>%`` to pass identifying information or transformations onto the next operation:
 
-
-```r
+```{r tab}
 # tab atendio
 sinac %>% count(atendio)
 ```
 
-```
-## # A tibble: 6 x 2
-##                        atendio     n
-##                      <dbl+lbl> <int>
-## 1  1 [Nurse]                      66
-## 2  2 [Midwife]                   454
-## 3  3 [Authorized person by SS]     8
-## 4  4 [Doctor]                  19060
-## 5  7 [Other]                     174
-## 6 NA                              22
-```
 
-
-
-```r
+```{r drop_dup}
 # duplicates drop, save to different data
 sinac_unique <- sinac %>% distinct()
 ```
 
 
-
-```r
+```{r bys}
 # to do operations by groups, like bys: sum 
 # (you can add more variables to the list at will)
 # note that we need to ignore missing values with na.rm = TRUE
 sinac %>% group_by(ent_res_cve) %>% 
   summarise(avg_weight = mean(peso_nac_vivo, na.rm = TRUE),
             min_weight = min(peso_nac_vivo, na.rm = TRUE))
-```
 
-```
-## # A tibble: 33 x 3
-##    ent_res_cve avg_weight min_weight
-##          <dbl>      <dbl>      <dbl>
-##  1           1      3115.        500
-##  2           2      3310.       1800
-##  3           3      3301.        950
-##  4           4      3092        1000
-##  5           5      3278.       1000
-##  6           6      3345.       1875
-##  7           7      3185.       1115
-##  8           8      3247.       1550
-##  9           9      3051.        792
-## 10          10      3225.       1500
-## # … with 23 more rows
 ```
 
 Be careful saving data as grouped, as this may affect future modifications you make to the data in unexpected ways!
 
-
-```r
+```{r sort}
 # view the data sorted: sort
 sinac %>% arrange(edad_madre,apgar)
-```
-
-```
-## # A tibble: 19,784 x 18
-##    edad_madre numero_embarazos talla_nac_vivo peso_nac_vivo mun_res_cve ent_res_cve mun_nac_cve
-##         <dbl>            <dbl>          <dbl>         <dbl>       <dbl>       <dbl>       <dbl>
-##  1          9                1             51          3100           4           2           4
-##  2          9                1             54          3100           9           1           7
-##  3         10                1             NA            NA          12          25          12
-##  4         10                1             52          3305          17          11          17
-##  5         10                1             53          3210          92          31          96
-##  6         10                1             50          2620           2           9           2
-##  7         10                2             48          3100          17          11          17
-##  8         10                1             50          3400          17          18          17
-##  9         10                1             NA            NA         122          15         122
-## 10         10                2             51          3400           3          11           3
-## # … with 19,774 more rows, and 11 more variables: ent_nac_cve <dbl>, tot_consult <dbl>,
-## #   schooling_mother <dbl>, dia_nac_hijo <dbl>, mes_nac_hijo <dbl>, year_nac_hijo <dbl>,
-## #   sexo_nac <dbl+lbl>, semanas_gest <dbl>, apgar <dbl>, proced <dbl+lbl>, atendio <dbl+lbl>
-```
-
-```r
 # again, here I haven't saved this, I'm just looking at it. 
 # To save this, set it equal to a name
+
 ```
 
 Looks like the youngest mothers in our data are 9 years old. Let's plot mother's age to get a sense of the distribution:
 
+```{r hist}
 
-```r
 hist(sinac$edad_madre)
-```
 
-![](intro_stata_to_r_files/figure-html/hist-1.png)<!-- -->
+```
 
 Here's a nicer version using ``ggplot``:
 
+```{r gghist, message=FALSE}
 
-```r
 ggplot(data = sinac, aes(x = edad_madre)) +
   geom_histogram(color="darkblue", fill="lightblue") + 
   xlab("Mother's age") + 
   theme_bw()
+  
 ```
-
-```
-## Warning: Removed 173 rows containing non-finite values (stat_bin).
-```
-
-![](intro_stata_to_r_files/figure-html/gghist-1.png)<!-- -->
 
 ##  A note about object assignment
 A theme you may have noted above is that we can do things to the data without changing the underlying data or even saving what we're doing. This may remind you of what you might do in Stata with ``preserve ... restore``, which is the only way in Stata (besides tempfiles I guess) to explore manipulations of the data without altering the underlying data.
@@ -257,8 +179,7 @@ Now we've looked around a bit at the data, we're going to clean it. These type o
 
 First let's get these column names in English...
 
-
-```r
+```{r rename_all}
 # rename
 # note that here I AM reassigning the data to save changes
 sinac <- sinac %>% rename(mother_age = edad_madre,
@@ -276,22 +197,7 @@ sinac <- sinac %>% rename(mother_age = edad_madre,
 sinac %>% head()
 ```
 
-```
-## # A tibble: 6 x 18
-##   mother_age no_preg length weight mun_res_cve ent_res_cve mun_nac_cve ent_nac_cve no_appts
-##        <dbl>   <dbl>  <dbl>  <dbl>       <dbl>       <dbl>       <dbl>       <dbl>    <dbl>
-## 1         36       2     49   3310          46          19          39          19       10
-## 2         28       3     48     NA          33          15           7           9       12
-## 3         20       2     48   3000         106          16         106          16        2
-## 4         20       1     52   3400          25           5          25           5        9
-## 5         27       1     50   3490          51          32          17          32        7
-## 6         30       6     51   3070          57          24          37          24        1
-## # … with 9 more variables: schooling_mother <dbl>, day_born <dbl>, mo_born <dbl>, yr_born <dbl>,
-## #   sex <dbl+lbl>, gest_age <dbl>, apgar <dbl>, proced <dbl+lbl>, type_doc <dbl+lbl>
-```
-
-
-```r
+```{r replace}
 # Let's change the state code from 99 to missing
 # replace
 # ifelse has arguments condition, what to do if true, then what to do if false
@@ -303,20 +209,11 @@ sinac <- sinac %>% mutate(ent_res_cve =
 ))
 
 summary(sinac$ent_res_cve)
-```
-
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-##    1.00   11.00   15.00   16.67   22.00   32.00     149
-```
-
-```r
 # good! looks like the max code is now 32 (the number of states in Mexico)
 ```
 
 
-
-```r
+```{r gen}
 # gen
 # Now let's make a categorical variable for mother's schooling 
 sinac <- sinac %>% mutate(schooling_cat = 
@@ -330,17 +227,13 @@ sinac <- sinac %>% mutate(schooling_cat =
                            ))
 
 summary(sinac$schooling_cat)
-```
 
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-##   1.000   1.000   2.000   1.986   3.000   3.000     354
 ```
 
 Now let's look at the distribution of these categories, which if you're curious correspond to completed secondary, completed high school, and more than high school:
 
+```{r plotschool}
 
-```r
 # first label my variable by making it a factor var
 
 sinac <- sinac %>% mutate(school = factor(schooling_cat,
@@ -353,16 +246,16 @@ ggplot(sinac, aes(school)) +
   geom_bar(color="darkblue", fill="lightblue") + 
   labs(x = 'Schooling', y = '# observations') +
   theme_bw()
-```
+  
 
-![](intro_stata_to_r_files/figure-html/plotschool-1.png)<!-- -->
+```
 
 ### Aggregating data (collapse)
 
 Let's get the mean by state; to do this, we want to collapse by the variable 'ent_res_cve'. If you want to group by more variables, just add them to the list for the "by" option. You can also write your own funtions for the "FUN" option, which makes this method about as flexible as you could want!
 
+```{r colmean}
 
-```r
 ## stata: collapse (mean) **, by(mun_res_cve ent_res_cve)
 sinac_means <- sinac %>% 
   select(mother_age, weight, length, schooling_mother) %>% 
@@ -370,21 +263,14 @@ sinac_means <- sinac %>%
             FUN = mean,
             na.rm = TRUE) %>%
   rename(ent_res_cve = Group.1)
+
+
 ```
 
-
- ent_res_cve   mother_age     weight     length   schooling_mother
-------------  -----------  ---------  ---------  -----------------
-           1     25.40152   3114.582   49.57364           5.307087
-           2     24.16774   3309.502   50.61504           4.878788
-           3     24.33645   3301.020   50.90000           5.175926
-           4     25.17213   3092.000   49.11570           5.033058
-           5     24.60542   3277.745   50.81377           5.572835
-           6     25.14000   3344.837   50.52688           5.424242
-           7     25.36635   3184.692   49.72425           4.148265
-           8     24.34216   3247.320   50.84615           4.994318
-           9     25.57806   3051.453   49.66126           5.709814
-          10     25.18333   3224.649   51.04545           5.197987
+```{r showmean, echo=FALSE}
+library(knitr)
+sinac_means %>% head(10) %>% kable()
+```
 
 ### Merging 
 
@@ -410,8 +296,7 @@ Say I want to add to this dataset the population of each municipality. My dictio
 2. Merge
 
 
-
-```r
+```{r coldic, echo=TRUE}
 # we want total population, so our function for aggregation will be sum:
 local_mun <- local %>% 
   select(CVE_ENT, CVE_MUN, POB_TOTAL) %>% 
@@ -421,19 +306,72 @@ local_mun <- local %>%
   rename(ent_res_cve = Group.1,
          mun_res_cve = Group.2) %>%
   select(ent_res_cve, mun_res_cve, POB_TOTAL)
+
 ```
 
+```{r showcol, echo=FALSE}
+local_mun %>% head(10) %>% kable()
+```
 
- ent_res_cve   mun_res_cve   POB_TOTAL
-------------  ------------  ----------
-           1             1      796667
-           2             1      466811
-           3             1       70656
-           4             1       52869
-           5             1        1070
-           6             1       28683
-           7             1       16814
-           8             1       11456
-          10             1       31307
-          11             1       84290
+You may look at this and think, wow, this is so much more work than just typing ``collapse (sum) POB_TOTAL, by(CVE_ENT CVE_MUN)``. And yes, it is wordier, but we are gaining a lot more control over our data by being more specific! Here I am telling R exactly what variables I want to work with, I can create my own function for aggregating, I am renaming variables in the process, and I end up with a dataset that if formatted exactly how I want it. 
+
+If I wanted to, I could even do this collapse and instead of saving it with the name "loc_mun", I could create it and use it in the merge all in one line to save myself memory and not create extra objects that are really only intermediate steps. But let's take things one step at a time for now. 
+
+Now for the merge. Some notes: 
+
+* I don't care about the population in municipalities that don't match to my birth data, so I'll choose ``left_join()``. 
+* If I don't specify "by", R will automatically find the columns that are named the same. But to ensure things are happening correctly, I'll go ahead and specify this category. 
+* Note that the first data that I mention (in this case, "sinac") is the "left" data. In Stata terminology, this would be the "master" data. 
+* Also thinking about Stata terminaology, there is no need to specify ``m:1``, ``1:m``, etc. R will merge all matching observations. 
+* Below I cast the SINAC values to doubles "along the way" to make sure the data types match between databases.
+* There are more great options you can use to further customize your join, check out the documentation for dplyr to learn more!
+
+```{r merge, echo=TRUE}
+sinac_merge <- sinac %>% 
+  mutate(ent_res_cve = as.double(ent_res_cve),
+         mun_res_cve = as.double(mun_res_cve)) %>%
+  left_join(local_mun,
+            by = c('ent_res_cve','mun_res_cve'))
+
+```
+```{r showmerge, echo=FALSE}
+sinac_merge %>%
+  select(ent_res_cve, 
+         mun_res_cve, 
+         weight, 
+         mother_age,
+         schooling_cat,
+         POB_TOTAL) %>% 
+  head(10) %>% kable()
+```
+
+Let's summarize our new population variable to see how many observations successfully matched:
+```{r matchcheck, echo=TRUE}
+summary(sinac_merge$POB_TOTAL)
+```
+Looks like 248 mothers did not have a municipality assigned to them. Let's check out these values to see what's going on. Next we'll summarize the municipal ID's, filtering the data to look at only observations where the population variable is NA. 
+
+```{r matchcheck2, echo=TRUE}
+sinac_merge %>% 
+  filter(is.na(POB_TOTAL)) %>%
+  select(mun_res_cve) %>%
+  summary()
+
+```
+
+Looks like for all the births that did not match to a population point, the municipal ID is 999; this probably represents a missing value, so I'll count our merge as a success!
+
+## Exporting data
+
+Finally, it may be useful sometimes to export data. When I was using Stata, I would generally have tons of dta files saved in different formats ready to merge or use with other data. In R, this becomes largely unnecessary because you can manipulate several raw files in the same code and combine them in different ways. So in general I would expect that you save fewer files, which helps maintain order in your workspace. But should you need to, here's how:
+
+```{r export, echo=TRUE}
+# Similar to outsheet, save, saveold
+
+# write.csv(sinac_merge, '../data/merged_data.csv')
+```
+
+There are also packages you can use to export to Stata, SAS, xls, even SPSS. 
+
+
 
