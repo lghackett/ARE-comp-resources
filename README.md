@@ -9,3 +9,5 @@ This repository is a hub of assorted resources compiled to help ARE students lea
 3. The **topics** folder is a catch-all for topical tutorials focused on students in ARE 212. For now, it includes only:
 * A short introduction to list comprehensions in python
 * A guide to branching, pull requests, and code review in github. 
+
+A huge thanks to Simon Greenhill for his contributions to this repository and Berkeley ARE for supporting this work. 
