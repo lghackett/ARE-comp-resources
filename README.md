@@ -6,4 +6,6 @@ This repository is a hub of assorted resources compiled to help ARE students lea
 
 2. **Installation guide** is a getting up and running in python guide, that works through installing python, writing a first python script in the console and in a text editor, and IDE's. 
 
-3. The **topics** folder is a catch-all for topical tutorials focused on students in ARE 212. For now, it includes only a short introduction to list comprehensions. 
+3. The **topics** folder is a catch-all for topical tutorials focused on students in ARE 212. For now, it includes only:
+* A short introduction to list comprehensions in python
+* A guide to branching, pull requests, and code review in github. 
