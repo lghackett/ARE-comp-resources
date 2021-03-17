@@ -2,15 +2,17 @@
 title: "Getting python up and running"
 author: "Lucy Hackett"
 date: "7/14/2020"
-output: 
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
   html_document:
+    highlight: haddock
+    keep_md: yes
     theme: flatly
-    highlight: haddock 
-    # code_folding: show
     toc: yes
     toc_depth: 4
     toc_float: yes
-    keep_md: true
 ---
 
 ```{r setup, include=FALSE}
