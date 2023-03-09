@@ -1,4 +1,4 @@
 *.Rhistory
 *.ipynb_checkpoints
 .DS_Store
-
+installation_guides/python-from-scratch/*
