@@ -4,8 +4,9 @@ This repository is a hub of assorted resources compiled to help ARE students lea
 
 1. **Stata to opensource** is a pair of tutorials that go through common data cleaning and manipulation exercises that one might do in Stata in both R and python. For now this tutorial is limited to data analysis; in the future, topics on regression analysis and exporting to LaTeX will be added.
 
-2. **Installation guide** is a getting up and running in python guide, that works through installing python, writing a first python script in the console and in a text editor, and IDE's. 
-
+2. **Installation_guides** has two guides to installing and using python:
+	- Anaconda: This is the recommended tutorial that installs python and the jupyter notebook and spyder IDEs via miniconda.
+	- python-alone: Not recommended. Installs python directly and teaches how to run python in the terminal and to write python code in plain text editors. 
 3. The **topics** folder is a catch-all for topical tutorials focused on students in ARE 212. For now, it includes only:
 * A short introduction to list comprehensions in python
 * A guide to branching, pull requests, and code review in github. 
