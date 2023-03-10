@@ -14,6 +14,10 @@ output:
     toc: yes
     toc_depth: '4'
     highlight: tango
+header-includes:
+    - \usepackage{multicol}
+    - \usepackage{hyperref}
+urlcolor: blue
 ---
 
 
@@ -80,7 +84,7 @@ conda config --add channels conda-forge
 **Making sure that our new environment is activated**, we will run ``conda install``. With this, we can choose to specify the version we want, or if we do not specify then the most recent version will attempt to be installed. So below I will specify the python version but let all the other packages be the most recent. I won't get into conda channels here, but note that googling "conda install PACKAGE-NAME" will usually turn up code you can copy paste into your terminal to install packages. We will also ask conda to use the channel we added, conda-forge You can install packages one at a time, or several at once:
 
 ```
-conda install python=3.7 notebook spyder statsmodels pandas numpy -c conda-forge
+conda install python=3.7 notbook nb_conda_kernels spyder statsmodels pandas numpy -c conda-forge
 ```
 
 Voilá! Now our environment is set up with these packages. If you want to test this, try:
