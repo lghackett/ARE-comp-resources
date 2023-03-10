@@ -1597,7 +1597,7 @@ won’t get into conda channels here, but note that googling “conda
 install PACKAGE-NAME” will usually turn up code you can copy paste into
 your terminal to install packages. We will also ask conda to use the
 channel we added, conda-forge You can install packages one at a time, or
-several at once:</p>
+several at once:<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
 <pre><code>conda install python=3.7 notbook nb_conda_kernels spyder statsmodels pandas numpy -c conda-forge</code></pre>
 <p>Voilá! Now our environment is set up with these packages. If you want
 to test this, try:</p>
@@ -1720,6 +1720,11 @@ change with the folder icon.</li>
 <li id="fn1"><p>Also Linux, but I won’t treat Linux separately here. If
 you are using Linux I’m going to assume you have the coding skills to do
 most of this yourself.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Note: The solve might take an obnoxious amount of time
+because of some complex solves that conda has to do with the
+<code>spyder</code> package. If you want, you can cancel this run and
+redo just deleting “spyder” from the install list, then install spyder
+by itself if desired later.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
