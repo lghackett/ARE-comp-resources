@@ -1579,32 +1579,42 @@ which at the moment is none! So let’s install.</p>
 </div>
 <div id="installing-packages-in-conda-environments" class="section level2">
 <h2>Installing packages in conda environments</h2>
-<p>I am going to set up a simple environment that just has python 3.7,
-jupyter notebook, spyder, statsmodels, pandas and numpy for some basic
-metrics. Remember you can always install more packages later, though
-trying to install the bulk of your packages at the beginning can
-sometimes help avoid conflicts later.</p>
+<p>I am going to set up a simple environment that just has python 3.8,
+jupyter notebook, statsmodels, pandas and numpy for some basic metrics.
+Remember you can always install more packages later, though trying to
+install the bulk of your packages at the beginning can sometimes help
+avoid conflicts later.</p>
 <p>Our first step is actually going to be to make sure the conda-forge
 channel is added to conda. We’re not going to worry too much about
-channels, just type:</p>
+channels, but they are essentially locations on the internet where
+certain packages live. To add a channel we are going to use, just
+type:</p>
 <pre><code>conda config --add channels conda-forge</code></pre>
-<p><strong>Making sure that our new environment is activated</strong>,
-we will run <code>conda install</code>. With this, we can choose to
-specify the version we want, or if we do not specify then the most
-recent version will attempt to be installed. So below I will specify the
-python version but let all the other packages be the most recent. I
-won’t get into conda channels here, but note that googling “conda
-install PACKAGE-NAME” will usually turn up code you can copy paste into
-your terminal to install packages. We will also ask conda to use the
-channel we added, conda-forge You can install packages one at a time, or
-several at once:<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
-<pre><code>conda install python=3.7 notebook nb_conda_kernels spyder statsmodels pandas numpy -c conda-forge</code></pre>
+<p>You don’t need to worry too much about channels because Google can
+tell you what channel to use; I recommend that anytime you want to
+install a package, just google “install [PACKAGE NAME] with conda” and
+copy and paste the code they recommend.</p>
+<p>Now, <strong>making sure that our new environment is
+activated</strong>, we will run <code>conda install</code>. With this,
+we can choose to specify the version we want, or if we do not specify
+then the most recent version will attempt to be installed. So below I
+will specify the python version but let all the other packages be the
+most recent. I won’t get into conda channels here, but note that
+googling “conda install PACKAGE-NAME” will usually turn up code you can
+copy paste into your terminal to install packages. We will also ask
+conda to use the channel we added, conda-forge You can install packages
+one at a time, or several at once. The next command installs python 3.8,
+a bunch of packages, and tells conda to use the conda-forge channel:</p>
+<pre><code>conda install python=3.8 notebook nb_conda_kernels spyder statsmodels pandas numpy -c conda-forge</code></pre>
 <p>Voilá! Now our environment is set up with these packages. If you want
 to test this, try:</p>
 <pre><code>conda list</code></pre>
 <p>This should return a list of the installed packages. If you create a
 new environment and run this same command, you will notice that you get
 an empty list because there are no programs available!</p>
+<p>Now let’s add another package from a different channel to our new
+environment:</p>
+<pre><code>conda install -c anaconda spyder</code></pre>
 <p>To deactivate a conda environment, just type:</p>
 <pre><code>conda deactivate</code></pre>
 <p>Now you have conda, python and other packages installed!</p>
@@ -1720,11 +1730,6 @@ change with the folder icon.</li>
 <li id="fn1"><p>Also Linux, but I won’t treat Linux separately here. If
 you are using Linux I’m going to assume you have the coding skills to do
 most of this yourself.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>Note: The solve might take an obnoxious amount of time
-because of some complex solves that conda has to do with the
-<code>spyder</code> package. If you want, you can cancel this run and
-redo just deleting “spyder” from the install list, then install spyder
-by itself if desired later.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 

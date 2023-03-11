@@ -3,6 +3,13 @@ title: "Installing and using Anaconda"
 author: "Lucy Hackett"
 date: "3/16/2022"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+    highlight: tango
+  word_document:
+    toc: yes
+    toc_depth: '4'
   html_document:
     highlight: haddock
     keep_md: yes
@@ -10,13 +17,6 @@ output:
     toc: yes
     toc_depth: 4
     toc_float: yes
-  word_document:
-    toc: yes
-    toc_depth: '4'
-  pdf_document:
-    toc: yes
-    toc_depth: '4'
-    highlight: tango
 header-includes:
 - \usepackage{multicol}
 - \usepackage{hyperref}
@@ -76,21 +76,20 @@ And you should see that ``(base)`` has changed to ``(env-name)``. We are now "in
 
 ## Installing packages in conda environments
 
-I am going to set up a simple environment that just has python 3.7, jupyter notebook, spyder, statsmodels, pandas and numpy for some basic metrics. Remember you can always install more packages later, though trying to install the bulk of your packages at the beginning can sometimes help avoid conflicts later. 
+I am going to set up a simple environment that just has python 3.8, jupyter notebook, statsmodels, pandas and numpy for some basic metrics. Remember you can always install more packages later, though trying to install the bulk of your packages at the beginning can sometimes help avoid conflicts later. 
 
-Our first step is actually going to be to make sure the conda-forge channel is added to conda. We're not going to worry too much about channels, just type:
+Our first step is actually going to be to make sure the conda-forge channel is added to conda. We're not going to worry too much about channels, but they are essentially locations on the internet where certain packages live. To add a channel we are going to use, just type:
 
 ```
 conda config --add channels conda-forge
 ```
 
+You don't need to worry too much about channels because Google can tell you what channel to use; I recommend that anytime you want to install a package, just google "install [PACKAGE NAME] with conda" and copy and paste the code they recommend. 
 
-
-
-**Making sure that our new environment is activated**, we will run ``conda install``. With this, we can choose to specify the version we want, or if we do not specify then the most recent version will attempt to be installed. So below I will specify the python version but let all the other packages be the most recent. I won't get into conda channels here, but note that googling "conda install PACKAGE-NAME" will usually turn up code you can copy paste into your terminal to install packages. We will also ask conda to use the channel we added, conda-forge You can install packages one at a time, or several at once:^[Note: The solve might take an obnoxious amount of time because of some complex solves that conda has to do with the ``spyder`` package. If you want, you can cancel this run and redo just deleting "spyder" from the install list, then install spyder by itself if desired later.]
+Now, **making sure that our new environment is activated**, we will run ``conda install``. With this, we can choose to specify the version we want, or if we do not specify then the most recent version will attempt to be installed. So below I will specify the python version but let all the other packages be the most recent. I won't get into conda channels here, but note that googling "conda install PACKAGE-NAME" will usually turn up code you can copy paste into your terminal to install packages. We will also ask conda to use the channel we added, conda-forge You can install packages one at a time, or several at once. The next command installs python 3.8, a bunch of packages, and tells conda to use the conda-forge channel:
 
 ```
-conda install python=3.7 notebook nb_conda_kernels spyder statsmodels pandas numpy -c conda-forge
+conda install python=3.8 notebook nb_conda_kernels spyder statsmodels pandas numpy -c conda-forge
 ```
 
 Voilá! Now our environment is set up with these packages. If you want to test this, try:
@@ -100,6 +99,12 @@ conda list
 ```
 
 This should return a list of the installed packages. If you create a new environment and run this same command, you will notice that you get an empty list because there are no programs available!
+
+Now let's add another package from a different channel to our new environment:
+
+```
+conda install -c anaconda spyder
+```
 
 To deactivate a conda environment, just type:
 
